@@ -1,0 +1,34 @@
+Sub MakeAllThreeLine()
+    Dim t As Table
+    On Error Resume Next
+    
+    For Each t In ActiveDocument.Tables
+        ' 只处理行数大于1的表格，单行表格直接跳过
+        If t.Rows.Count > 1 Then
+            '清除全部内部横竖线
+            t.Borders.InsideLineStyle = 0
+            
+            '顶线1.5磅
+            With t.Borders(1)
+                .LineStyle = 1
+                .LineWidth = 15
+            End With
+            
+            '底线1.5磅
+            With t.Borders(3)
+                .LineStyle = 1
+                .LineWidth = 15
+            End With
+            
+            '表头第一行下框线1.5磅
+            With t.Rows(1).Borders(3)
+                .LineStyle = 1
+                .LineWidth = 15
+            End With
+            
+            '表格适配页面版心
+            t.AutoFitBehavior 2
+        End If
+    Next t
+    On Error GoTo 0
+End Sub

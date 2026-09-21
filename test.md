@@ -12,7 +12,10 @@ eqnPrefixTemplate: "公式($$i$$)"
 figureTitle: "图"            
 figPrefix: ["图", "图"]      
 figIndexTemplate: "$$i$$"
-
+tableTitle: "表" 
+tblPrefix: ["表", "表"] 
+tblIndexTemplate: "$$i$$"
+titleDelim: " "
 ---
 
 # 1复述整理
@@ -77,3 +80,20 @@ $$ R_g = asfasdfsdafsdafdsR_{g,T}+R_{g,jksahfkahfkjhaskfhsdjR} $$ {#eq:rg_total}
 $$ R_g = asfasdfsdafsdafdsR_{g,T}+RKJHJKGJGJ_{g,jksrtrsetertherjkaflkhsdkjfhkjshgakshfhwekjrthwkjhqwkhekrjthwjsahfkahfkjhaskfhsdjR} $$ {#eq:rg_total1}
 
 收发站总群距离如[@eq:rg_total1]所示。
+
+
+
+|      指标      | 校准前    | 校准后    |
+| :------------: | --------- | --------- |
+|  距离残差均值  | $+0.4783$ | $+0.0007$ |
+| 距离残差标准差 | $9.5334$  | $9.5251$  |
+| 距离残差 RMSE  | $9.5216$  | $9.5012$  |
+| 距离残差最大值 | $36.1180$ | $35.9861$ |
+|  方位残差均值  | $-0.2011$ | $-0.0001$ |
+| 方位残差标准差 | $1.3877$  | $1.3877$  |
+| 方位残差 RMSE  | $1.3987$  | $1.3842$  |
+| 方位残差最大值 | $4.1866$  | $4.3876$  |
+
+
+
+ : 参数估计结果（实施例一） {#tbl:ex1}
