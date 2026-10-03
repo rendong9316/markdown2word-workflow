@@ -52,6 +52,19 @@ $$ R_g = asfasdfsdafsdafdsR_{g,T}+RKJHJKGJGJ_{g,jksrtrsetertherjkaflkhsdkjfhkjsh
 
 正确示范：![校准航迹：先验参考航迹与未校准雷达航迹](fig1_calibration_ck.png){#fig:calib_track}
 
+还有：如果出现连续多行都是公式，而且是不同编号的（互相独立的），务必在行间插入一行<div>&#8203;</div>
+
+举例：
+
+$$R_{g,k}^{corr}=R_{g,k}^{obs}-\widehat{\Delta R}_{sync},\qquad
+\phi_{az,k}^{corr}=\phi_{az,k}^{obs}-\widehat{\Delta\theta}$$ {#eq:eq032}
+
+<div>&#8203;</div>
+
+$$r_k=\sqrt{\left(\frac{R_{g,k}^{corr}}{2}\right)^2-4\hat h^2},\qquad
+x_k=r_k\sin\phi_{az,k}^{corr},\qquad
+y_k=r_k\cos\phi_{az,k}^{corr}$$ {#eq:eq033}
+
 还有：所有表格都必须要按照下面格式书写：
 
 
