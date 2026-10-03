@@ -5,9 +5,20 @@ from docx.enum.text import WD_ALIGN_PARAGRAPH
 from docx.oxml.ns import qn
 from docx.oxml import OxmlElement
 
-# ============ 可调参数：三列宽度（厘米）============
-# 顺序：新空列、原来的第1列、原来的第2列（公式列）
-COL_WIDTHS_CM = [1.5, 13, 1.5]
+# ============ 可调参数：三列宽度比例 ============
+# 顺序：新空列、原来的第1列（文字列）、原来的第2列（公式列）
+# 三者之和建议为 1.0；脚本会自动换算成 twips
+COL_RATIOS = [0.10, 0.80, 0.10]
+
+# 表格总宽占"纸张可用宽度"的比例。1.0 = 铺满正文区
+TOTAL_WIDTH_RATIO = 1.0
+
+# 左右再留一点额外安全边距（厘米），一般 0
+SAFETY_MARGIN_CM = 0.0
+
+# 页面尺寸缺失时的兜底（twips）
+DEFAULT_PAGE_WIDTH_TWIPS = 11906   # A4 宽 21cm
+DEFAULT_MARGIN_TWIPS     = 1440    # 默认 2.54cm
 
 # 常用标签缓存
 M_OMATH     = qn('m:oMath')
@@ -74,10 +85,45 @@ def set_fixed_layout(tblEl):
     layout.set(qn('w:type'), 'fixed')
 
 
-# ============ 判断逻辑（本次重点）============
+# ============ 纸张可用宽度计算 ============
+
+def _len_to_twips(length_obj, default_twips: int) -> int:
+    """python-docx 的 Length 对象转 twips；为 None 时回退默认值"""
+    if length_obj is None:
+        return default_twips
+    return length_obj.twips
+
+
+def get_usable_width_twips(section, safety_cm: float = 0.0) -> int:
+    """返回正文区可用宽度（twips）= 页宽 - 左边距 - 右边距 - 安全边距"""
+    pw = _len_to_twips(section.page_width,    DEFAULT_PAGE_WIDTH_TWIPS)
+    lm = _len_to_twips(section.left_margin,   DEFAULT_MARGIN_TWIPS)
+    rm = _len_to_twips(section.right_margin,  DEFAULT_MARGIN_TWIPS)
+    usable = pw - lm - rm - cm_to_twips(safety_cm)
+    return max(usable, 1000)   # 兜底，避免负数或过小
+
+
+def distribute_widths(usable_twips: int,
+                      ratios,
+                      total_ratio: float = 1.0):
+    """
+    按比例把可用宽度分给各列：
+      - 先按 ratios 分配
+      - 舍入误差全部塞给最宽的一列（视觉影响最小）
+      - 保证 sum(widths) == target_total
+    """
+    target_total = int(round(usable_twips * total_ratio))
+    widths = [int(round(target_total * r)) for r in ratios]
+    diff = target_total - sum(widths)
+    # 找最宽的一列的索引
+    widest = max(range(len(widths)), key=lambda i: widths[i])
+    widths[widest] += diff
+    return widths
+
+
+# ============ 判断逻辑 ============
 
 def cell_has_math(cell) -> bool:
-    """单元格内是否含 OMML 公式（同时兼容 oMath / oMathPara 两种写法）"""
     tc = cell._tc
     return bool(tc.findall('.//' + M_OMATH) or tc.findall('.//' + M_OMATHPARA))
 
@@ -96,7 +142,6 @@ def is_formula_table(tbl) -> bool:
         n_rows = len(tbl.rows)
         n_cols = len(tbl.columns)
     except Exception:
-        # tblGrid 异常等情况直接跳过
         return False
 
     if n_rows != 1 or n_cols != 2:
@@ -109,8 +154,20 @@ def is_formula_table(tbl) -> bool:
 
 doc = Document("输出15.docx")
 
-widths_twips = [cm_to_twips(c) for c in COL_WIDTHS_CM]
+# 取文档主 section 的可用宽度
+# 注意：若文档含多节且页宽不同，需要更精细地按表格所在节取，
+#       常见单节文档用 sections[0] 即可
+section = doc.sections[0]
+usable_twips = get_usable_width_twips(section, SAFETY_MARGIN_CM)
+
+# 按比例分配三列宽度
+widths_twips = distribute_widths(usable_twips, COL_RATIOS, TOTAL_WIDTH_RATIO)
 total_twips  = sum(widths_twips)
+
+print(f"纸张可用宽度 = {usable_twips} twips "
+      f"(≈ {usable_twips / 567:.2f} cm)")
+print(f"三列实际宽度 = {widths_twips} twips "
+      f"(≈ {[round(w / 567, 2) for w in widths_twips]} cm)")
 
 processed = 0
 
