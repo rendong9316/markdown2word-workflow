@@ -1,6 +1,6 @@
 开头必须以：
 chapters: true
-chapDelim: "\u2011"
+chapDelim: "\u002d"
 numberSections: false
 secHeaderDelim: " "
 eqnLabels: arabic
@@ -9,11 +9,11 @@ tableEqns: true
 eqnBlockInlineMath: true
 eqnIndexTemplate: "($$i$$)"
 eqnPrefixTemplate: "公式($$i$$)"
-figureTitle: "图"            
-figPrefix: ["图", "图"]      
+figureTitle: "图"
+figPrefix: ["图", "图"]
 figIndexTemplate: "$$i$$"
-tableTitle: "表" 
-tblPrefix: ["表", "表"] 
+tableTitle: "表"
+tblPrefix: ["表", "表"]
 tblIndexTemplate: "$$i$$"
 titleDelim: " "
 
@@ -64,6 +64,29 @@ $$R_{g,k}^{corr}=R_{g,k}^{obs}-\widehat{\Delta R}_{sync},\qquad
 $$r_k=\sqrt{\left(\frac{R_{g,k}^{corr}}{2}\right)^2-4\hat h^2},\qquad
 x_k=r_k\sin\phi_{az,k}^{corr},\qquad
 y_k=r_k\cos\phi_{az,k}^{corr}$$ {#eq:eq033}
+
+
+
+还有：所有公式都不允许有\bar和任何形式的空格。\bar应该用\overline代替。所有形式的空格如\,，\quad，\qquad，反斜杠空格 \ ，以及半角空格用于分隔公式元素等，都不允许出现。根本不必空格分割。
+
+具体细则（务必遵守）：
+
+1. 禁止的空格形式（全部要删除）：
+   - \bar：一律用 \overline 代替（\bar s → \overline s；注意 \overline s、\overline{s^2} 里用花括号时，内容前不要再写 \bar）。
+   - 反斜杠空格 \ （即 backslash 紧跟一个空格，如 "a \ b"、"10\ km"）：一律删除。表格单元格、行内公式、独立公式里出现的都要删。
+     - 反例：$(300,\ 10,\ 5.0)$、$10\ \text{km}$、$(720.5,\ 284.7)$、\rho_c\in\{450,600,750,900\}\ \text{km}
+     - 正例：$(300,10,5.0)$、$10\text{ km}$、$(720.5,284.7)$、\rho_c\in\{450,600,750,900\}\text{ km}
+   - \quad、\qquad：一律删除，用普通逗号 "," 分隔并列子式即可。
+     - 反例：$$R=R_1,\qquad R=R_2$$、$$a=\frac{1}{x},\qquad b=\frac{1}{y}$$
+     - 正例：$$R=R_1, R=R_2$$、$$a=\frac{1}{x}, b=\frac{1}{y}$$（逗号后普通半角空格可保留，这不是"公式内的空格命令"，属于正常标点；但绝不能用 \、\quad、\qquad）
+   - \;、\:、\! 等其它显式间距命令：同样禁止，删除后直接拼接或改用普通逗号。
+
+2. 受控例外（不属于"禁止空格"，允许保留，但不要误删）：
+   - 矩阵内部用于换行的 \\ （bmatrix / pmatrix / cases 等环境里的行分隔符，形如 "…& -1\ σ_R\ 0\\[6pt] 0&0&…"）：这是 LaTeX 矩阵语法的行换行，不是"分隔元素用的空格"，必须保留。
+   - 在正文中作为示例去解释某个命令本身时（例如用文字说明"上标 $\hat{\ }$ 表示估计量"里的 \ ），属于元说明、不是参与排版的公式内容，允许保留。
+   判定原则：凡是"用于在两个数学元素之间塞间距"的 \、\quad、\qquad、\; 等，一律删；凡是"矩阵换行"或"文字里举例说明某命令"的，保留。
+
+3. 自查方法：搜 \ （反斜杠加空格）、\quad、\qquad、\;、\, 与 \bar，逐一确认是否属于上述两类受控例外，否则全部删除；同时确认 \bar 已全部改成 \overline。
 
 还有：所有表格都必须要按照下面格式书写：
 

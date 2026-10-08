@@ -1,5 +1,5 @@
 chapters: true
-chapDelim: "\u2011"
+chapDelim: "\u002d"
 numberSections: false
 secHeaderDelim: " "
 eqnLabels: arabic
@@ -8,11 +8,11 @@ tableEqns: true
 eqnBlockInlineMath: true
 eqnIndexTemplate: "($$i$$)"
 eqnPrefixTemplate: "公式($$i$$)"
-figureTitle: "图"            
-figPrefix: ["图", "图"]      
+figureTitle: "图"
+figPrefix: ["图", "图"]
 figIndexTemplate: "$$i$$"
-tableTitle: "表" 
-tblPrefix: ["表", "表"] 
+tableTitle: "表"
+tblPrefix: ["表", "表"]
 tblIndexTemplate: "$$i$$"
 titleDelim: " "
 
@@ -26,10 +26,9 @@ titleDelim: " "
 
 转换出来之后，运行python fix_plus.py（其中需要根据文档名称配置） ，用来将公式表格补充左侧空白列。
 
-但是这样之后，唯一不足就是公式字体还是默认的。这时候全局调整公式字体：公式->e^x转换右下角的放大框进入公式选项，改变默认字体为XITS。
-
-之后：全选->字体设置为XITS->全选->字体设置为新罗马。这样就做到公式全为特别像新罗马的xits，其他字母都是标准新罗马。
-
 之后：宏处理：进入开发-vb，输入脚本：批量设置三线表的宏.txt，运行后会把所有非单行表格设为三线表。但是会把一部分多行公式也处理，需要手动核查。
 
-之后：文件->选项->保存->勾选：将字体嵌入文件。这样转成pdf后，我们自己弄的xits字体才不会丢失东西。
+
+
+最后：在mathtype插件中，点击转换公式，他会把所有omml公式转成mathtype格式，字体自然就是新罗马。（这一步通常很慢）。
+
