@@ -58,7 +58,7 @@ Sub MakeAllThreeLine()
             
             If Not nextPara Is Nothing Then
                 ' 【修正】直接对 Range 设置段落格式，不需要 .Range
-                nextPara.ParagraphFormat.LineUnitBefore = 0.5
+                nextPara.ParagraphFormat.LineUnitBefore = 1
             End If
             ' ==========================================================
             
