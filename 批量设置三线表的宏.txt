@@ -1,34 +1,67 @@
 Sub MakeAllThreeLine()
     Dim t As Table
-    On Error Resume Next
+    Dim nextPara As Range ' 【修正】将 Paragraph 改为 Range
     
     For Each t In ActiveDocument.Tables
-        ' 只处理行数大于1的表格，单行表格直接跳过
+        ' 只处理行数大于 1 的表格
         If t.Rows.Count > 1 Then
-            '清除全部内部横竖线
-            t.Borders.InsideLineStyle = 0
             
-            '顶线1.5磅
-            With t.Borders(1)
-                .LineStyle = 1
-                .LineWidth = 15
+            ' ================= 新增功能 =================
+            ' 【新增1】表格居中
+            t.Rows.Alignment = wdAlignRowCenter
+            
+            ' 【新增2】表格内所有字体设置为五号
+            t.Range.Font.Size = 10.5
+            t.Range.Font.SizeBi = 10.5
+            ' ============================================
+            
+            ' 1. 先清除全部内外边框
+            With t.Borders
+                .InsideLineStyle = wdLineStyleNone
+                .OutsideLineStyle = wdLineStyleNone
             End With
             
-            '底线1.5磅
-            With t.Borders(3)
-                .LineStyle = 1
-                .LineWidth = 15
+            ' 2. 顶线：1.5 磅
+            With t.Borders(wdBorderTop)
+                .LineStyle = wdLineStyleSingle
+                .LineWidth = wdLineWidth150pt
+                .Color = wdColorBlack
             End With
             
-            '表头第一行下框线1.5磅
-            With t.Rows(1).Borders(3)
-                .LineStyle = 1
-                .LineWidth = 15
+            ' 3. 底线：1.5 磅
+            With t.Borders(wdBorderBottom)
+                .LineStyle = wdLineStyleSingle
+                .LineWidth = wdLineWidth150pt
+                .Color = wdColorBlack
             End With
             
-            '表格适配页面版心
-            t.AutoFitBehavior 2
+            ' 4. 表头第一行下框线：0.75 磅
+            With t.Rows(1).Borders(wdBorderBottom)
+                .LineStyle = wdLineStyleSingle
+                .LineWidth = wdLineWidth075pt
+                .Color = wdColorBlack
+            End With
+            
+            ' 【关键修改1】取消跨页自动重复表头
+            t.Rows(1).HeadingFormat = False
+            
+            ' 【关键修改2】禁止表格跨页断行
+            t.Rows.AllowBreakAcrossPages = True
+            
+            ' 5. 表格适配页面版心
+            t.PreferredWidthType = wdPreferredWidthPercent
+            t.PreferredWidth = 90
+            
+            ' ================= 【新增3】表格段后间距 =================
+            ' 获取表格后面的第一个段落范围（此时返回值是 Range 类型）
+            Set nextPara = t.Range.Next(wdParagraph)
+            
+            If Not nextPara Is Nothing Then
+                ' 【修正】直接对 Range 设置段落格式，不需要 .Range
+                nextPara.ParagraphFormat.LineUnitBefore = 0.5
+            End If
+            ' ==========================================================
+            
         End If
     Next t
-    On Error GoTo 0
 End Sub
