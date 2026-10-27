@@ -1,0 +1,79 @@
+Sub 批量文献引用转上标_限定页码范围()
+    Dim doc As Document
+    Dim startPage As Long, endPage As Long
+    Dim startPos As Long, endPos As Long
+    Dim totalPages As Long
+    Dim matchCount As Long
+    
+    Set doc = ActiveDocument
+    matchCount = 0
+    
+    ' ==========================================
+    ' 设定你需要处理的页码范围（请根据实际物理页码调整）
+    startPage = 1
+    endPage = 64
+    ' ==========================================
+    
+    totalPages = doc.ComputeStatistics(wdStatisticPages)
+    If totalPages < startPage Then
+        MsgBox "文档页数不足，无法处理。", vbExclamation
+        Exit Sub
+    End If
+    
+    ' 1. 获取起始位置 (第1页开头)
+    Selection.GoTo What:=wdGoToPage, Which:=wdGoToAbsolute, Count:=startPage
+    startPos = Selection.Start
+    
+    ' 2. 获取结束位置 (第65页开头的前一个字符，即第64页的结尾)
+    If totalPages >= (endPage + 1) Then
+        Selection.GoTo What:=wdGoToPage, Which:=wdGoToAbsolute, Count:=endPage + 1
+        endPos = Selection.Start - 1
+    Else
+        endPos = doc.Content.End
+    End If
+    
+    ' 3. 将光标定位到起始位置，准备查找
+    Selection.SetRange startPos, startPos
+    
+    ' 4. 开始查找
+    With Selection.Find
+        .ClearFormatting
+        .Text = "[\[［][0-9,，\-－]{1,10}[\]］]"
+        .MatchWildcards = True
+        .Format = False
+        .Forward = True
+        .Wrap = wdFindStop ' 遇到边界停止
+        
+        Do While .Execute
+            ' 【核心修复】：每次找到后，先判断当前匹配的位置是否已经超出了结束点
+            ' 如果当前位置大于等于设定的结束位置，直接跳出循环，保护后面的内容
+            If Selection.Start >= endPos Then
+                Exit Do
+            End If
+            
+            Dim isFormula As Boolean
+            isFormula = False
+            
+            ' 判断1：是否为Word内置公式对象 (OMML)
+            If Selection.OMaths.Count > 0 Then
+                isFormula = True
+            Else
+                ' 判断2：字体是否为数学公式常用字体 (Cambria Math)
+                If Selection.Font.Name = "Cambria Math" Then
+                    isFormula = True
+                End If
+            End If
+            
+            ' 如果既不是公式，则改为上标
+            If Not isFormula Then
+                Selection.Font.Superscript = True
+                matchCount = matchCount + 1
+            End If
+            
+            ' 将光标折叠到匹配项的末尾，继续下一次查找
+            Selection.Collapse wdCollapseEnd
+        Loop
+    End With
+    
+    MsgBox "处理完成！在第 " & startPage & " 至 " & endPage & " 页内，共将 " & matchCount & " 处文献引用标号改为了上标。", vbInformation
+End Sub
