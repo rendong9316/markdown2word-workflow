@@ -52,7 +52,9 @@ $$ R_g = asfasdfsdafsdafdsR_{g,T}+RKJHJKGJGJ_{g,jksrtrsetertherjkaflkhsdkjfhkjsh
 
 正确示范：![校准航迹：先验参考航迹与未校准雷达航迹](fig1_calibration_ck.png){#fig:calib_track}
 
-还有：如果出现连续多行都是公式，而且是不同编号的（互相独立的），务必在行间插入一行<div>&#8203;</div>
+还有：当两个各自带编号、且在内容上互不引用的公式先后出现，中间只有空行、没有正文或图表时，务必在它们之间插入一行<div>&#8203;</div>
+
+判定要点：只看"两个公式之间有没有正文"，不看它们数学上是否相关。夹了正文或图表 → 不插；没夹 → 插。
 
 举例：
 
@@ -71,7 +73,11 @@ y_k=r_k\cos\phi_{az,k}^{corr}$$ {#eq:eq033}
 
 具体细则（务必遵守）：
 
-0.不允许键入空格。例如：$R_e=6371\text{ km}$ 这是完全错误的。正确的做法是：$R_e=6371\text{km}$
+0.不允许键入空格。
+
+错误示范：`R_e=6371\text{ km}$ `
+
+正确示范：`$R_e=6371\text{km}$`
 
 1. 禁止的空格形式（全部要删除）：
    - \bar：一律用 \overline 代替（\bar s → \overline s；注意 \overline s、\overline{s^2} 里用花括号时，内容前不要再写 \bar）。
