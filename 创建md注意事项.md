@@ -52,6 +52,19 @@ $$ R_g = asfasdfsdafsdafdsR_{g,T}+RKJHJKGJGJ_{g,jksrtrsetertherjkaflkhsdkjfhkjsh
 
 正确示范：![校准航迹：先验参考航迹与未校准雷达航迹](fig1_calibration_ck.png){#fig:calib_track}
 
+此处的正文交叉引用部分要非常小心注意：[]前就不要出现：图/公式/式/表 等描述了，因为[@eq:rg_total]这类东西在正文中自带文字前缀。下面进行举例演示：
+
+正确示范：
+
+1. 收发站总群距离如[@eq:rg_total]所示。
+2. 研究框架如[@fig:ch1_framework]所示。
+
+错误示范：
+
+1. 收发站总群距离如公式[@eq:rg_total]所示。
+2. 收发站总群距离如式[@eq:rg_total]所示。
+3. 研究框架如图[@fig:ch1_framework]所示。
+
 还有：当两个各自带编号、且在内容上互不引用的公式先后出现，中间只有空行、没有正文或图表时，务必在它们之间插入一行<div>&#8203;</div>
 
 判定要点：只看"两个公式之间有没有正文"，不看它们数学上是否相关。夹了正文或图表 → 不插；没夹 → 插。
